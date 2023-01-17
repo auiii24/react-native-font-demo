@@ -92,22 +92,68 @@ You can use the below bash script (make sure you give the font folder as first a
 
 ```bash
 #!/bin/bash
-# fixfonts.sh
 
-typeset folder="$1"
-if [[ -d "$folder" && ! -z "$folder" ]]; then
-  pushd "$folder";
-  for file in *.ttf; do
-    typeset normalized="${file//-/_}";
-    normalized="${normalized,,}";
-    mv "$file" "$normalized"
-  done
-  popd
-fi
+NORMAL="normal"
+ITALIC="italic"
+
+main() {
+    typeset folder="$1"
+    if [[ -d "$folder" && ! -z "$folder" ]]; then
+    pushd "$folder";
+    for file in *.ttf; do
+        normalized=$(echo $file | tr '-' '_' | tr '[:upper:]' '[:lower:]')
+
+        if [[ $normalized == *_thin.ttf ]]; then
+            build $NORMAL 100 $normalized
+        elif [[ $normalized == *_thinitalic.ttf ]]; then
+            build $ITALIC 100 $normalized
+        elif [[ $normalized == *_extralight.ttf ]]; then
+            build $NORMAL 200 $normalized
+        elif [[ $normalized == *_extralightitalic.ttf ]]; then
+            build $ITALIC 200 $normalized
+        elif [[ $normalized == *_light.ttf ]]; then
+            build $NORMAL 300 $normalized
+        elif [[ $normalized == *_lightitalic.ttf ]]; then
+            build $ITALIC 300 $normalized
+        elif [[ $normalized == *_regular.ttf ]]; then
+            build $NORMAL 400 $normalized
+        elif [[ $normalized == *_italic.ttf ]]; then
+            build $ITALIC 400 $normalized
+        elif [[ $normalized == *_medium.ttf ]]; then
+            build $NORMAL 500 $normalized
+        elif [[ $normalized == *_mediumitalic.ttf ]]; then
+            build $ITALIC 500 $normalized
+        elif [[ $normalized == *_semibold.ttf ]]; then
+            build $NORMAL 600 $normalized
+        elif [[ $normalized == *_semibolditalic.ttf ]]; then
+            build $ITALIC 600 $normalized
+        elif [[ $normalized == *_bold.ttf ]]; then
+            build $NORMAL 700 $normalized
+        elif [[ $normalized == *_bolditalic.ttf ]]; then
+            build $ITALIC 700 $normalized
+        elif [[ $normalized == *_extrabold.ttf ]]; then
+            build $NORMAL 800 $normalized
+        elif [[ $normalized == *_extrabolditalic.ttf ]]; then
+            build $ITALIC 800 $normalized
+        elif [[ $normalized == *_black.ttf ]]; then
+            build $NORMAL 900 $normalized
+        elif [[ $normalized == *_blackitalic.ttf ]]; then
+            build $ITALIC 900 $normalized
+        fi
+    done
+    popd
+    fi
+}
+
+build() {
+    echo "<font app:fontStyle=\"$1\" app:fontWeight=\"$2\" app:font=\"@font/"$3"\"/>"
+}
+
+main $1;
 ```
 
 ```sh
-./fixfonts.sh /path/to/root/FontDemo/android/app/src/main/res/font
+bash ./fixfonts.sh /[target_to_.ttf_folder]
 ```
 
 ##### 2. Create the definition file
